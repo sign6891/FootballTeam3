@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">FootballTeam3</string>
+    <string name="text_position">text_position</string>
+    <string name="text_name">text_name</string>
+    <string name="_1">Команда 1</string>
+    <string name="_2">Команда 2</string>
+    <string name="_3">Команда 3</string>
+    <string name="new_gamer">New Gamer</string>
+    <string name="name"> Name </string>
+    <string name="skills"> Skills </string>
+</resources>
