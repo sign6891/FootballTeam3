@@ -46,12 +46,24 @@ public class GamerAdapter extends RecyclerView.Adapter<GamerAdapter.GamerViewHol
 
         holder.gamerViewItemBinding.setGamer(gamer);
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        //Обработка клика на gamerOkTextView
+        holder.gamerViewItemBinding.setClick(new MainActivity.OkGamerClickHandler() {
             @Override
-            public void onClick(View v) {
-                mainActivity.addAndEditGamer(true, gamer, position);
+            public void onNewClick(View view) {
+                //Log.d("ClickKeyOk", "Ok Click");
+                mainActivity.gamerOkAndNo(gamer, position);
             }
         });
+
+        //Обработка долгого нажатия на элемент списка для редактирования Gamer
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                mainActivity.addAndEditGamer(true, gamer, position);
+                return false;
+            }
+        });
+
     }
 
     @Override
@@ -62,9 +74,11 @@ public class GamerAdapter extends RecyclerView.Adapter<GamerAdapter.GamerViewHol
     public class GamerViewHolder extends RecyclerView.ViewHolder {
 
         private GamerViewItemBinding gamerViewItemBinding;
+
         public GamerViewHolder(@NonNull GamerViewItemBinding gamerViewItemBinding) {
             super(gamerViewItemBinding.getRoot());
             this.gamerViewItemBinding = gamerViewItemBinding;
         }
+
     }
 }

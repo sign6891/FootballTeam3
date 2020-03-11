@@ -6,10 +6,13 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="gamer"
             type="com.example.footballteam3.Gamer" />
+        <variable
+            name="click"
+            type="com.example.footballteam3.MainActivity.OkGamerClickHandler" />
+
     </data>
 
 
@@ -48,15 +51,20 @@
                 android:textSize="15sp"
                 />
 
-            <CheckBox
-                android:id="@+id/checkBox"
-                style="@android:style/Widget.CompoundButton.CheckBox"
+            <TextView
+                android:id="@+id/okGamerTextView"
+                android:clickable="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="8dp"
-                android:textSize="14sp" />
+                android:text="@{gamer.gamerOk}"
+                android:onClick="@{click::onNewClick}"
+                android:textColor="@color/colorAccent"
+                android:layout_marginEnd="16dp"
+                android:textSize="24sp"
+
+                android:focusable="true" />
 
         </RelativeLayout>
     </androidx.cardview.widget.CardView>

@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+//Аннотацией Entity нам необходимо пометить объект, который мы хотим хранить в базе данных.
 @Entity(tableName = "gamer")
 public class Gamer {
 
@@ -17,14 +18,14 @@ public class Gamer {
     @ColumnInfo(name = "gamer_skills")
     private String gamerSkills;
 
-    @ColumnInfo(name = "gamer_false")
-    private boolean gamerFalse;
+    @ColumnInfo(name = "gamer_ok")
+    private String gamerOk;
 
-    public Gamer(int id, String gamerName, String gamerSkills, boolean gamerFalse) {
+    public Gamer(int id, String gamerName, String gamerSkills, String gamerOk) {
         this.id = id;
         this.gamerName = gamerName;
         this.gamerSkills = gamerSkills;
-        this.gamerFalse = gamerFalse;
+        this.gamerOk = gamerOk;
     }
 
     public int getId() {
@@ -51,11 +52,11 @@ public class Gamer {
         this.gamerSkills = gamerSkills;
     }
 
-    public boolean isGamerFalse() {
-        return gamerFalse;
+    public String getGamerOk() {
+        return gamerOk;
     }
 
-    public void setGamerFalse(boolean gamerFalse) {
-        this.gamerFalse = gamerFalse;
+    public void setGamerOk(String gamerOk) {
+        this.gamerOk = gamerOk;
     }
 }

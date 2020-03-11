@@ -25,7 +25,7 @@
             android:id="@+id/floatingActionButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="48dp"
+            android:layout_marginEnd="65dp"
             android:layout_marginBottom="48dp"
             android:clickable="true"
             android:onClick="@{buttonHandler::onFloatingActionButton}"
