@@ -13,20 +13,20 @@ import java.util.List;
 @Dao //В объекте Dao мы будем описывать методы для работы с базой данных.
 public interface GamerDAO {
 
-    @Insert
+    @Insert // Добовление объекта
     public long addGamer(Gamer gamer);
 
-    @Update
+    @Update // обновление и редактирование записи
     public void updateGamer(Gamer gamer);
 
-    @Delete
+    @Delete // удаление объекта или записи
     public void deleteGamer(Gamer gamer);
 
-    @Query("select * from gamer")
+    @Query("select * from gamer") // метод для извлечения всех записей из таблицы
     public List<Gamer> getAllGamer();
 
-    @Query("select * from gamer where gamer_id ==:gamerId ")
-    Gamer getGamer(long gamerId);
+    @Query("select * from gamer where gamer_id ==:gamerId ")// возвращает один объект по id
+    Gamer getGamerId(long gamerId);
 
     @Query("select * from gamer where gamer_ok ==:gamerOk ")
     Gamer getGamerOk(String gamerOk);

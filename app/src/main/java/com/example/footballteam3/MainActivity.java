@@ -7,17 +7,15 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -26,6 +24,7 @@ import android.widget.Toast;
 
 import com.example.footballteam3.data.GamerAppDataBase;
 import com.example.footballteam3.databinding.ActivityMainBinding;
+import com.example.footballteam3.databinding.GamerViewItemBinding;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -37,19 +36,24 @@ public class MainActivity extends AppCompatActivity {
     private GamerAdapter gamerAdapter;
     private ActivityMainBinding activityMainBinding;
     private ClickFloatingActionButton clickFloatingActionButton;
+    private GamerViewItemBinding gamerViewItemBinding;
 
-    private TextView gamerOk;
+    public SwipeRefreshLayout swipeRefreshLayout;
+    boolean gamerOne = false;
+
+    TextView gamerOk;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        gamerViewItemBinding = DataBindingUtil.setContentView(this, R.layout.gamer_view_item);
 
         activityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         clickFloatingActionButton = new ClickFloatingActionButton(this);
         activityMainBinding.setButtonHandler(clickFloatingActionButton);
+
 
         RecyclerView recyclerView = activityMainBinding.layoutContentMain.recyclerView;
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -62,10 +66,21 @@ public class MainActivity extends AppCompatActivity {
                 "GamerDB").build();
 
         loadContacts();
+
+        //Свайп сверху вниз для выгрузки из БД данных на экран
+        swipeRefreshLayout = findViewById(R.id.swiperefresh);
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                gamerOne = true;
+                loadContacts();
+            }
+        });
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public void addAndEditGamer(final  boolean isUpdate, final Gamer gamer, final int position) {
+    public void addAndEditGamer(final boolean isUpdate, final Gamer gamer, final int position) {
 
         LayoutInflater layoutInflater = LayoutInflater.from(getApplicationContext());
         View view = layoutInflater.inflate(R.layout.layout_add_gamer, null);
@@ -77,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
         final EditText nameGamerEditText = view.findViewById(R.id.nameGamerEditText);
         final EditText skillsGamerEditText = view.findViewById(R.id.skillsGamerEditText);
         gamerOk = view.findViewById(R.id.okGamerTextView);
-
 
         newGamerTitle.setText(!isUpdate ? "Add Gamer" : "Edit Gamer");
 
@@ -115,19 +129,26 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void stopSwipeRefreshLayout() {
+        swipeRefreshLayout.setRefreshing(false);
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //Работа с БД, добовление, удаление, редактирование, вывод всех игроков
 
     private void loadContacts() {
 
         new GetAllGamerAsyncTask().execute();
-
+        if (gamerOne) {
+            stopSwipeRefreshLayout();
+            gamerOne = false;
+        }
     }
 
     ////////////
-    private void createGamer(String gamerName, String gamerSkills, String  gamerOk) {
+    private void createGamer(String gamerName, String gamerSkills, String ok) {
 
-        new CreateGamerAsyncTask().execute(new Gamer(0, gamerName, gamerSkills, gamerOk));
+        new CreateGamerAsyncTask().execute(new Gamer(0, gamerName, gamerSkills, ok));
     }
 
     ///////////
@@ -152,31 +173,31 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("ResourceAsColor")
     public void gamerOkAndNo(Gamer gamer, int position) {
 
-        //ArrayList<String> nameGamer = new ArrayList<>();
-
         if (gamer.getGamerOk().equals("No")) {
             gamer.setGamerOk("Ok");
-            gamerArrayList.set(position, gamer);
-            new UpdateGamerAsyncTask().execute(gamer);
+            //Log.d("ClickOk", "Ok");
         } else {
             gamer.setGamerOk("No");
-            gamerArrayList.set(position, gamer);
-            new UpdateGamerAsyncTask().execute(gamer);
+            //Log.d("ClickOk", "No");
         }
+        gamerAdapter.notifyItemChanged(position);
+        new OkAndNoUpdateGamerAsyncTask().execute(gamer);
+        gamerArrayList.set(position, gamer);
     }
 
     //////////////////////////////////////////////////////
 
-        public interface OkGamerClickHandler {
+    /*public interface OkGamerClickHandler {
         void onNewClick(View view);
-        }
-
+    }*/
 
     private class GetAllGamerAsyncTask extends AsyncTask<Void, Void, Void> {
 
         @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
         protected Void doInBackground(Void... voids) {
+
+            //Получаем лист со всеми объектами
             gamerArrayList = (ArrayList<Gamer>) gamerAppDataBase.getGamerDAO().getAllGamer();
 
             //сортировка игроков по их скилам от большего к меньшему
@@ -185,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
                 public int compare(Gamer o1, Gamer o2) {
                     if (o1.getGamerSkills().equals(o2.getGamerSkills())) {
                         return 0;
-                    } else if (Integer.parseInt(o1.getGamerSkills()) < Integer.parseInt(o2.getGamerSkills()) ) {
+                    } else if (Integer.parseInt(o1.getGamerSkills()) < Integer.parseInt(o2.getGamerSkills())) {
                         return 1;
                     } else {
                         return -1;
@@ -219,7 +240,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private class OkAndNoUpdateGamerAsyncTask extends AsyncTask<Gamer, Void, Void> {
+        @Override
+        protected Void doInBackground(Gamer... gamers) {
 
+            gamerAppDataBase.getGamerDAO().updateGamer(gamers[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
+    }
 
     private class UpdateGamerAsyncTask extends AsyncTask<Gamer, Void, Void> {
 
@@ -265,5 +298,4 @@ public class MainActivity extends AppCompatActivity {
             addAndEditGamer(false, null, -1);
         }
     }
-
 }

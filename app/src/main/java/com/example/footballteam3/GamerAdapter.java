@@ -1,8 +1,10 @@
 package com.example.footballteam3;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
@@ -16,6 +18,7 @@ public class GamerAdapter extends RecyclerView.Adapter<GamerAdapter.GamerViewHol
 
     ArrayList<Gamer> gamerArrayList = new ArrayList<>();
     private MainActivity mainActivity;
+    TextView okGamerTextView;
 
     public void setGamerArrayList(ArrayList<Gamer> gamerArrayList) {
         this.gamerArrayList = gamerArrayList;
@@ -47,19 +50,29 @@ public class GamerAdapter extends RecyclerView.Adapter<GamerAdapter.GamerViewHol
         holder.gamerViewItemBinding.setGamer(gamer);
 
         //Обработка клика на gamerOkTextView
-        holder.gamerViewItemBinding.setClick(new MainActivity.OkGamerClickHandler() {
+       /* holder.gamerViewItemBinding.setClick(new MainActivity.OkGamerClickHandler() {
             @Override
             public void onNewClick(View view) {
                 //Log.d("ClickKeyOk", "Ok Click");
-                mainActivity.gamerOkAndNo(gamer, position);
+                int a = gamer.getId();
+                mainActivity.gamerOkAndNo(gamer, position, a);
             }
-        });
+        });*/
+        //Клик на элемент списка для смены ок на no
+       holder.itemView.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+
+               mainActivity.gamerOkAndNo(gamer, position);
+           }
+       });
 
         //Обработка долгого нажатия на элемент списка для редактирования Gamer
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 mainActivity.addAndEditGamer(true, gamer, position);
+
                 return false;
             }
         });

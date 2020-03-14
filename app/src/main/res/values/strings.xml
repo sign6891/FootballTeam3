@@ -8,6 +8,6 @@
     <string name="new_gamer">New Gamer</string>
     <string name="name"> Name </string>
     <string name="skills"> Skills </string>
-    <string name="no">No</string>
     <string name="ok">Ok</string>
+    <string name="no">No</string>
 </resources>

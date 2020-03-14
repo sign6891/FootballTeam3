@@ -2,6 +2,7 @@ package com.example.footballteam3;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 //Аннотацией Entity нам необходимо пометить объект, который мы хотим хранить в базе данных.
@@ -20,6 +21,12 @@ public class Gamer {
 
     @ColumnInfo(name = "gamer_ok")
     private String gamerOk;
+    @Ignore
+    public Gamer(int id, String gamerName, String gamerSkills) {
+        this.id = id;
+        this.gamerName = gamerName;
+        this.gamerSkills = gamerSkills;
+    }
 
     public Gamer(int id, String gamerName, String gamerSkills, String gamerOk) {
         this.id = id;

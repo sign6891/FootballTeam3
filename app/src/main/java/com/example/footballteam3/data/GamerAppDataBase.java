@@ -10,5 +10,7 @@ import com.example.footballteam3.Gamer;
 @Database(entities = {Gamer.class}, version = 1)
 public abstract class GamerAppDataBase extends RoomDatabase {
 
+    //Метод который возвращает объект ДАО, через который мы будем получать доступ к данным
+    // в классе Gamer и манипулировать ими
     public abstract GamerDAO getGamerDAO();
 }
